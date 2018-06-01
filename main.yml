@@ -1,0 +1,6 @@
+---
+# task main
+
+- name: main message
+  debug:
+    msg: "Please specify a task in your playbook"

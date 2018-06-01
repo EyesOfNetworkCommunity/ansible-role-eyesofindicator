@@ -1,0 +1,37 @@
+---
+# task install
+
+- name: disable selinux
+  selinux:
+    state: disabled
+
+- name: install dependencies
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - docker
+    - docker-py
+    - git
+
+- name: configure docker service
+  service:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: clone eyesofindicator git project
+  git:
+    repo: "{{ eoi_repo }}"
+    dest: "{{ eoi_repo_dir }}"
+    version: "{{ eoi_version }}"
+    update: "{{ eoi_keep_updated }}"
+    force: yes
+    accept_hostkey: yes
+
+- name: Build docker image
+  docker_image:
+    path: "{{ eoi_repo_dir }}"
+    name: "{{ eoi_image }}"
+    tag: "{{ eoi_version }}"
+    push: yes

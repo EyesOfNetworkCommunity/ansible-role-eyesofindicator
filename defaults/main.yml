@@ -1,0 +1,8 @@
+---
+# defaults file for ansible-role-eyesofindicator
+
+eoi_repo: https://github.com/EyesOfNetworkCommunity/eyesofindicator
+eoi_repo_dir: "/tmp/eoi"
+eoi_version: "2.0"
+eoi_keep_updated: yes
+eoi_image: "eyes/eoi"
