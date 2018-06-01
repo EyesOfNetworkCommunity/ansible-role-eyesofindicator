@@ -11,7 +11,7 @@
     state: present
   with_items:
     - docker
-    - docker-py
+    - docker-python
     - git
 
 - name: configure docker service
@@ -29,9 +29,26 @@
     force: yes
     accept_hostkey: yes
 
-- name: Build docker image
+- name: build docker image
   docker_image:
     path: "{{ eoi_repo_dir }}"
     name: "{{ eoi_image }}"
     tag: "{{ eoi_version }}"
-    push: yes
+
+- name: run docker container
+  docker_container:
+    name: "{{ eoi_container }}"
+    image: "{{ eoi_image }}:{{ eoi_version }}"
+    state: started
+    restart_policy: always
+    ports:
+    - "{{ eoi_port }}:3030"
+    env:
+      APKS: "{{ eoi_apks }}"
+      GEMS: "{{ eoi_gems }}"
+      WIDGETS: "{{ eoi_widgets }}"
+
+- name: clean eyesofindicator git project
+  file: 
+    path: "{{ eoi_repo_dir }}"
+    state: absent
