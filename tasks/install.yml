@@ -47,8 +47,3 @@
       APKS: "{{ eoi_apks }}"
       GEMS: "{{ eoi_gems }}"
       WIDGETS: "{{ eoi_widgets }}"
-
-- name: clean eyesofindicator git project
-  file: 
-    path: "{{ eoi_repo_dir }}"
-    state: absent
