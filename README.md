@@ -10,11 +10,16 @@ CentOS 7 with minimal install.
 Role Variables
 --------------
 
+* `eoi_container` - "eoi"
+* `eoi_version` - "2.0"
+* `eoi_image` -  "eyes/eoi"
+* `eoi_port` - 3030
 * `eoi_repo` - https://github.com/EyesOfNetworkCommunity/eyesofindicator
 * `eoi_repo_dir` - "/tmp/eoi"
-* `eoi_version` - "2.0"
 * `eoi_keep_updated` - yes
-* `eoi_image` - "eyes/eoi"
+* `eoi_apks` - ""
+* `eoi_gems` - ""
+* `eoi_widgets` - ""
 
 Example Playbook
 ----------------
