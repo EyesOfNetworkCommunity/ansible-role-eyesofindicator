@@ -35,6 +35,24 @@
     name: "{{ eoi_image }}"
     tag: "{{ eoi_version }}"
 
+- name: create required directories
+  file:
+    path: "{{ item }}"
+    mode: 0755
+    state: directory
+    owner: root
+    group: root
+  with_items:
+    - "/srv/eyesofindicator"
+    - "/srv/eyesofindicator/{{ eoi_container }}"
+    - "/srv/eyesofindicator/{{ eoi_container }}/assets"
+    - "/srv/eyesofindicator/{{ eoi_container }}/dashboards"
+    - "/srv/eyesofindicator/{{ eoi_container }}/config"
+    - "/srv/eyesofindicator/{{ eoi_container }}/jobs"
+    - "/srv/eyesofindicator/{{ eoi_container }}/lib-eoi"
+    - "/srv/eyesofindicator/{{ eoi_container }}/widgets"
+    - "/srv/eyesofindicator/{{ eoi_container }}/public"
+
 - name: run docker container
   docker_container:
     name: "{{ eoi_container }}"
@@ -47,3 +65,12 @@
       APKS: "{{ eoi_apks }}"
       GEMS: "{{ eoi_gems }}"
       WIDGETS: "{{ eoi_widgets }}"
+    volume: "{{ item }}"
+  with_items:
+    - "/srv/eyesofindicator/{{ eoi_container }}/assets:/assets"
+    - "/srv/eyesofindicator/{{ eoi_container }}/dashboards:/dashboards"
+    - "/srv/eyesofindicator/{{ eoi_container }}/config:/config"
+    - "/srv/eyesofindicator/{{ eoi_container }}/jobs:/jobs"
+    - "/srv/eyesofindicator/{{ eoi_container }}/lib-eoi:/lib-eoi"
+    - "/srv/eyesofindicator/{{ eoi_container }}/widgets:/widgets"
+    - "/srv/eyesofindicator/{{ eoi_container }}/public:/public"
