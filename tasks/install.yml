@@ -43,15 +43,35 @@
     owner: root
     group: root
   with_items:
-    - "/srv/eyesofindicator"
-    - "/srv/eyesofindicator/{{ eoi_container }}"
-    - "/srv/eyesofindicator/{{ eoi_container }}/assets"
-    - "/srv/eyesofindicator/{{ eoi_container }}/dashboards"
-    - "/srv/eyesofindicator/{{ eoi_container }}/config"
-    - "/srv/eyesofindicator/{{ eoi_container }}/jobs"
-    - "/srv/eyesofindicator/{{ eoi_container }}/lib-eoi"
-    - "/srv/eyesofindicator/{{ eoi_container }}/widgets"
-    - "/srv/eyesofindicator/{{ eoi_container }}/public"
+    - "{{ eoi_install_dir }}"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/assets"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/dashboards"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/config"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/jobs"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/lib-eoi"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/public"
+
+- name: eonapi key retrieved
+  uri:
+    url: "https://{{ ansible_default_ipv4.address }}/eonapi/getApiKey?&username={{ eon_user }}&password={{ eon_password }}"
+    body_format: json
+    validate_certs: no
+    headers:
+      Content-Type: "application/json"
+  register: output
+
+- name: EON Token validated
+    url: "https://{{ ansible_default_ipv4.address }}/eonapi/getAuthenticationStatus?&username={{ eon_user }}&apiKey={{ output.json.EONAPI_KEY }}"
+    body_format: json
+    validate_certs: no
+    headers:
+      Content-Type: "application/json"
+  register: output
+
+- debug:
+    msg: "EONAPI KEY for user {{ eon_user }} on host {{ ansible_default_ipv4.address }}: {{ output.json.status }}"
 
 - name: run docker container
   docker_container:
@@ -67,10 +87,10 @@
       WIDGETS: "{{ eoi_widgets }}"
     volume: "{{ item }}"
   with_items:
-    - "/srv/eyesofindicator/{{ eoi_container }}/assets:/assets"
-    - "/srv/eyesofindicator/{{ eoi_container }}/dashboards:/dashboards"
-    - "/srv/eyesofindicator/{{ eoi_container }}/config:/config"
-    - "/srv/eyesofindicator/{{ eoi_container }}/jobs:/jobs"
-    - "/srv/eyesofindicator/{{ eoi_container }}/lib-eoi:/lib-eoi"
-    - "/srv/eyesofindicator/{{ eoi_container }}/widgets:/widgets"
-    - "/srv/eyesofindicator/{{ eoi_container }}/public:/public"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/assets:/assets"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/dashboards:/dashboards"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/config:/config"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/jobs:/jobs"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/lib-eoi:/lib-eoi"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets:/widgets"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/public:/public"

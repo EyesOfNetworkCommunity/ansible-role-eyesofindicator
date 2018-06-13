@@ -11,3 +11,4 @@ eoi_keep_updated: yes
 eoi_apks: ""
 eoi_gems: ""
 eoi_widgets: ""
+eoi_install_dir: "/srv/eyesofindicator"
