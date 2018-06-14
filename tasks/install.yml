@@ -60,18 +60,29 @@
     validate_certs: no
     headers:
       Content-Type: "application/json"
-  register: output
+  register: request_key
 
 - name: EON Token validated
-    url: "https://{{ ansible_default_ipv4.address }}/eonapi/getAuthenticationStatus?&username={{ eon_user }}&apiKey={{ output.json.EONAPI_KEY }}"
+  uri:
+    url: "https://{{ ansible_default_ipv4.address }}/eonapi/getAuthenticationStatus?&username={{ eon_user }}&apiKey={{ request_key.json.EONAPI_KEY }}"
     body_format: json
     validate_certs: no
     headers:
       Content-Type: "application/json"
-  register: output
+  register: validate
 
 - debug:
-    msg: "EONAPI KEY for user {{ eon_user }} on host {{ ansible_default_ipv4.address }}: {{ output.json.status }}"
+    msg: "EONAPI KEY for user {{ eon_user }} on host {{ ansible_default_ipv4.address }}: {{ validate.json.status }}"
+
+- name: Copy static files
+  copy:
+    src: "{{ role_path }}/files/defaults/"
+    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/"
+
+- name: Modify jobs with TOKEN
+  template:
+    src: "jobs/eon.rb.j2"
+    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/jobs/eon.rb"
 
 - name: run docker container
   docker_container:
@@ -85,12 +96,11 @@
       APKS: "{{ eoi_apks }}"
       GEMS: "{{ eoi_gems }}"
       WIDGETS: "{{ eoi_widgets }}"
-    volume: "{{ item }}"
-  with_items:
-    - "{{ eoi_install_dir }}/{{ eoi_container }}/assets:/assets"
-    - "{{ eoi_install_dir }}/{{ eoi_container }}/dashboards:/dashboards"
-    - "{{ eoi_install_dir }}/{{ eoi_container }}/config:/config"
-    - "{{ eoi_install_dir }}/{{ eoi_container }}/jobs:/jobs"
-    - "{{ eoi_install_dir }}/{{ eoi_container }}/lib-eoi:/lib-eoi"
-    - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets:/widgets"
-    - "{{ eoi_install_dir }}/{{ eoi_container }}/public:/public"
+    volumes:
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/assets:/assets"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/dashboards:/dashboards"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/config:/config"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/jobs:/jobs"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/lib-eoi:/lib-eoi"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets:/widgets"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/public:/public"
