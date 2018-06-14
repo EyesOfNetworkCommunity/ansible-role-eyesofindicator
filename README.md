@@ -39,3 +39,5 @@ Author Information
 ------------------
 
 * **Jean-Philippe Levy** - <jean-philippe.levy@axians.com> - [EyesOfNetwork Community](https://github.com/eyesofnetworkcommunity)
+* **Guilalume Ona** - <guillaume.ona@axians.com> - [EyesOfNetwork Community](https://github.com/eyesofnetworkcommunity)
+* **Sebastien Davoult** - <sebastien.davoult@axians.com> - [EyesOfNetwork Community](https://github.com/eyesofnetworkcommunity)
