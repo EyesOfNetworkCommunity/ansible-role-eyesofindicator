@@ -1,5 +1,3 @@
-### ARCELOR EON
-
 # Modules
 require 'rest-client'
 
@@ -30,7 +28,8 @@ SCHEDULER.every '60s', :first_in => 0 do
 	)
 
 	args = { 
-		"backendid" => "0"
+		"backendid" => "0",
+                "filters" =>  [ "acknowledged = 0", "scheduled_downtime_depth = 0", "host_scheduled_downtime_depth = 0" ]
 	}
 	
 	post = response.post(args.to_json, { content_type: 'application/json' }) 
