@@ -1,5 +1,9 @@
 ---
 # task install
+- assert:
+    that:
+      - "ansible_version.full < '2.6.0'"
+    msg: "Ansible version must be less than 2.6.0"
 
 - name: disable selinux
   selinux:
