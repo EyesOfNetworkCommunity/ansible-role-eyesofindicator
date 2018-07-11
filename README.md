@@ -6,6 +6,7 @@ Requirements
 ------------
 
 CentOS 7 with minimal install.
+Ansible < 2.6
 
 Role Variables
 --------------

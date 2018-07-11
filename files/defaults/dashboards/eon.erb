@@ -1,0 +1,48 @@
+<script type='text/javascript'>
+$(function() {
+	Dashing.widget_base_dimensions = [305, 325]
+	Dashing.numColumns = 4
+});
+</script>
+
+<% content_for :title do %>EON Dashboard<% end %>
+
+<div class="gridster">
+	<ul>
+
+		<!-- Ligne 1 -->
+		<li data-row="1" data-col="1" data-sizex="1" data-sizey="1">
+			<div data-id="logo" data-view="Image" data-title="Logo" data-image="/Axians.png" style="background-color: #ffffff"></div>
+		</li>
+		<li data-row="1" data-col="1" data-sizex="1" data-sizey="1">
+			<div data-id="nagios_hosts_up" data-view="Number" data-title="Hosts Up"></div>
+			<i class="fa fa-check-circle icon-background2"></i>
+		</li>
+		<li data-row="1" data-col="2" data-sizex="1" data-sizey="1">
+			<div data-id="nagios_hosts_down" data-view="Number" data-title="Hosts Down"></div>
+			<i class="fa fa-exclamation-circle icon-background2"></i>
+		</li>
+		<li data-row="1" data-col="3" data-sizex="1" data-sizey="1">
+			<div data-id="nagios_hosts_unreachable" data-view="Number" data-title="Hosts Unreachable"></div>
+			<i class="fa fa-question-circle icon-background2"></i>
+		</li>
+
+		<!-- Ligne 2 -->
+		<li data-row="2" data-col="1" data-sizex="1" data-sizey="1">
+			<div data-id="clock" data-view="Clock" style="background-color: #47bbb3"></div>
+			<i class="fa fa-clock-o icon-background2"></i>
+		</li>
+		<li data-row="2" data-col="2" data-sizex="1" data-sizey="1">
+			<div data-id="nagios_services_warning" data-view="Number" data-title="Services Warning"></div>
+			<i class="fa fa-exclamation-triangle icon-background2"></i>
+		</li>
+		<li data-row="2" data-col="3" data-sizex="1" data-sizey="1">
+			<div data-id="nagios_services_critical" data-view="Number" data-title="Services Critical"></div>
+			<i class="fa fa-exclamation-circle icon-background2"></i>
+		</li>
+		<li data-row="2" data-col="4" data-sizex="1" data-sizey="1">
+			<div data-id="nagios_services_unknown" data-view="Number" data-title="Services Unknown"></div>
+			<i class="fa fa-question-circle icon-background2"></i>
+		</li>
+	</ul>
+</div>

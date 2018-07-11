@@ -1,0 +1,75 @@
+# Modules
+require 'rest-client'
+
+# EON infos
+eon_ip = '{{ ansible_default_ipv4.address }}'
+eon_token = '{{ request_key.json.EONAPI_KEY }}'
+
+# Variables list_status
+states = Array.new
+states[0]='fa-check-circle'
+states[1]='fa-exclamation-triangle'
+states[2]='fa-exclamation-circle'
+states[3]='fa-question-circle'
+
+# Refresh dashboard
+SCHEDULER.every '2h', :first_in => 0 do
+	send_event('refresh', {event: 'reload', dashboard: 'eon'}, 'dashboards')
+end
+
+# Get nagios states
+SCHEDULER.every '60s', :first_in => 0 do
+
+	api_url = 'https://'+eon_ip+'/eonapi/listNagiosStates?username=admin&apiKey='+eon_token
+
+	response = RestClient::Resource.new(
+		api_url,
+		:verify_ssl =>  OpenSSL::SSL::VERIFY_NONE
+	)
+
+	args = { 
+		"backendid" => "0",
+                "filters" =>  [ "acknowledged = 0", "scheduled_downtime_depth = 0", "host_scheduled_downtime_depth = 0" ]
+	}
+	
+	post = response.post(args.to_json, { content_type: 'application/json' }) 
+
+	json_data = JSON.parse(post.body) 
+
+	# Get States
+	status_hosts_down = "2"
+	if json_data["result"]["hosts"]["down"] == 0
+		status_hosts_down = "0"
+	end
+	
+	status_hosts_unreachable = "3"
+	if json_data["result"]["hosts"]["unreachable"] == 0
+		status_hosts_unreachable = "0"
+	end
+	
+	status_services_warning = "1"
+	if json_data["result"]["services"]["warning"] == 0
+		status_services_warning = "0"
+	end
+	
+	status_services_critical = "2"
+	if json_data["result"]["services"]["critical"] == 0
+		status_services_critical = "0"
+	end
+	
+	status_services_unknown = "3"
+	if json_data["result"]["services"]["unknown"] == 0
+		status_services_unknown = "0"
+	end
+	
+	# Hosts
+	send_event('nagios_hosts_up', { current: json_data["result"]["hosts"]["up"], status: "0" } )
+	send_event('nagios_hosts_down', { current: json_data["result"]["hosts"]["down"], status: status_hosts_down } )
+	send_event('nagios_hosts_unreachable', { current: json_data["result"]["hosts"]["unreachable"], status: status_hosts_unreachable } )
+
+	# Services
+	send_event('nagios_services_warning', { current: json_data["result"]["services"]["warning"], status: status_services_warning } )
+	send_event('nagios_services_critical', { current: json_data["result"]["services"]["critical"], status: status_services_critical } )
+	send_event('nagios_services_unknown', { current: json_data["result"]["services"]["unknown"], status: status_services_unknown } )
+
+end

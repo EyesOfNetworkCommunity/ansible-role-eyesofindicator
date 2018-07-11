@@ -1,5 +1,9 @@
 ---
 # task install
+- assert:
+    that:
+      - "ansible_version.full < '2.6.0'"
+    msg: "Ansible version must be less than 2.6.0"
 
 - name: disable selinux
   selinux:
@@ -35,6 +39,55 @@
     name: "{{ eoi_image }}"
     tag: "{{ eoi_version }}"
 
+- name: create required directories
+  file:
+    path: "{{ item }}"
+    mode: 0755
+    state: directory
+    owner: root
+    group: root
+  with_items:
+    - "{{ eoi_install_dir }}"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/assets"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/dashboards"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/config"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/jobs"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/lib-eoi"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets"
+    - "{{ eoi_install_dir }}/{{ eoi_container }}/public"
+
+- name: eonapi key retrieved
+  uri:
+    url: "https://{{ ansible_default_ipv4.address }}/eonapi/getApiKey?&username={{ eon_user }}&password={{ eon_password }}"
+    body_format: json
+    validate_certs: no
+    headers:
+      Content-Type: "application/json"
+  register: request_key
+
+- name: EON Token validated
+  uri:
+    url: "https://{{ ansible_default_ipv4.address }}/eonapi/getAuthenticationStatus?&username={{ eon_user }}&apiKey={{ request_key.json.EONAPI_KEY }}"
+    body_format: json
+    validate_certs: no
+    headers:
+      Content-Type: "application/json"
+  register: validate
+
+- debug:
+    msg: "EONAPI KEY for user {{ eon_user }} on host {{ ansible_default_ipv4.address }}: {{ validate.json.status }}"
+
+- name: Copy static files
+  copy:
+    src: "{{ role_path }}/files/defaults/"
+    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/"
+
+- name: Modify jobs with TOKEN
+  template:
+    src: "jobs/eon.rb.j2"
+    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/jobs/eon.rb"
+
 - name: run docker container
   docker_container:
     name: "{{ eoi_container }}"
@@ -47,3 +100,11 @@
       APKS: "{{ eoi_apks }}"
       GEMS: "{{ eoi_gems }}"
       WIDGETS: "{{ eoi_widgets }}"
+    volumes:
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/assets:/assets"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/dashboards:/dashboards"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/config:/config"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/jobs:/jobs"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/lib-eoi:/lib-eoi"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets:/widgets"
+      - "{{ eoi_install_dir }}/{{ eoi_container }}/public:/public"

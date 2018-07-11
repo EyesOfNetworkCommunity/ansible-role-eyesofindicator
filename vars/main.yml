@@ -1,2 +1,4 @@
 ---
 # vars file for ansible-role-eyesofindicator
+eon_user: admin
+eon_password: admin
