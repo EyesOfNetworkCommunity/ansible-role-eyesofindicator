@@ -1,0 +1,38 @@
+---
+# task dashboard_eon
+
+- name: eonapi key retrieved
+  uri:
+    url: "https://{{ eon_ip_address.address }}/eonapi/getApiKey?&username={{ eon_user }}&password={{ eon_password }}"
+    body_format: json
+    validate_certs: no
+    headers:
+      Content-Type: "application/json"
+  register: request_key
+
+- name: EON Token validated
+  uri:
+    url: "https://{{ eon_ip_address.address }}/eonapi/getAuthenticationStatus?&username={{ eon_user }}&apiKey={{ request_key.json.EONAPI_KEY }}"
+    body_format: json
+    validate_certs: no
+    headers:
+      Content-Type: "application/json"
+  register: validate
+
+- debug:
+    msg: "EONAPI KEY for user {{ eon_user }} on host {{ eon_ip_address.address }}: {{ validate.json.status }}"
+
+- name: Copy static files
+  copy:
+    src: "{{ role_path }}/files/defaults/"
+    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/"
+
+- name: Modify jobs with TOKEN
+  template:
+    src: "jobs/eon.rb.j2"
+    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/jobs/eon.rb"
+
+- name: Restart docker container
+  docker:
+    name: "{{ eoi_container }}"
+    state: restarted

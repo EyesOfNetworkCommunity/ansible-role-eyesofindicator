@@ -1,9 +1,5 @@
 ---
 # task install
-- assert:
-    that:
-      - "ansible_version.full < '2.6.0'"
-    msg: "Ansible version must be less than 2.6.0"
 
 - name: disable selinux
   selinux:
@@ -15,8 +11,31 @@
     state: present
   with_items:
     - docker
-    - docker-python
+    - epel-release
     - git
+
+- name: install python-docker-py
+  yum:
+    name: python-docker-py
+    state: present
+  when: "ansible_version.full < '2.6.0'"
+
+- name: install pip
+  yum:
+    name: python-pip
+    state: present
+  when: "ansible_version.full >= '2.6.0'"
+
+- name: pip uninstall docker-py
+  pip:
+    name: docker-py
+    state: absent
+  when: "ansible_version.full >= '2.6.0'"
+
+- name: pip install docker-compose
+  pip:
+    name: docker-compose
+  when: "ansible_version.full >= '2.6.0'"
 
 - name: configure docker service
   service:
@@ -56,37 +75,6 @@
     - "{{ eoi_install_dir }}/{{ eoi_container }}/lib-eoi"
     - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets"
     - "{{ eoi_install_dir }}/{{ eoi_container }}/public"
-
-- name: eonapi key retrieved
-  uri:
-    url: "https://{{ ansible_default_ipv4.address }}/eonapi/getApiKey?&username={{ eon_user }}&password={{ eon_password }}"
-    body_format: json
-    validate_certs: no
-    headers:
-      Content-Type: "application/json"
-  register: request_key
-
-- name: EON Token validated
-  uri:
-    url: "https://{{ ansible_default_ipv4.address }}/eonapi/getAuthenticationStatus?&username={{ eon_user }}&apiKey={{ request_key.json.EONAPI_KEY }}"
-    body_format: json
-    validate_certs: no
-    headers:
-      Content-Type: "application/json"
-  register: validate
-
-- debug:
-    msg: "EONAPI KEY for user {{ eon_user }} on host {{ ansible_default_ipv4.address }}: {{ validate.json.status }}"
-
-- name: Copy static files
-  copy:
-    src: "{{ role_path }}/files/defaults/"
-    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/"
-
-- name: Modify jobs with TOKEN
-  template:
-    src: "jobs/eon.rb.j2"
-    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/jobs/eon.rb"
 
 - name: run docker container
   docker_container:
