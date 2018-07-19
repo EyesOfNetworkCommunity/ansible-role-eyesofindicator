@@ -58,6 +58,12 @@
     name: "{{ eoi_image }}"
     tag: "{{ eoi_version }}"
 
+- name: delete required directories
+  file:
+    path: "{{ eoi_install_dir }}/{{ eoi_container }}"
+    state: absent
+  when: eoi_remove
+
 - name: create required directories
   file:
     path: "{{ item }}"
@@ -75,6 +81,12 @@
     - "{{ eoi_install_dir }}/{{ eoi_container }}/lib-eoi"
     - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets"
     - "{{ eoi_install_dir }}/{{ eoi_container }}/public"
+
+- name: remove docker container
+  docker_container:
+    name: "{{ eoi_container }}"
+    state: absent
+  when: eoi_remove
 
 - name: run docker container
   docker_container:
