@@ -28,6 +28,6 @@
     dest: "{{ eoi_install_dir }}/{{ eoi_container }}/jobs/eon.rb"
 
 - name: Restart docker container
-  docker:
+  docker_container:
     name: "{{ eoi_container }}"
     state: restarted
