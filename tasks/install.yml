@@ -76,11 +76,6 @@
     - "{{ eoi_install_dir }}/{{ eoi_container }}/widgets"
     - "{{ eoi_install_dir }}/{{ eoi_container }}/public"
 
-- name: copy default files
-  copy:
-    src: "{{ role_path }}/files/defaults/"
-    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/"
-
 - name: run docker container
   docker_container:
     name: "{{ eoi_container }}"
@@ -92,6 +87,7 @@
     env:
       APKS: "{{ eoi_apks }}"
       GEMS: "{{ eoi_gems }}"
+      SAMPLES: "{{ eoi_samples }}"
       WIDGETS: "{{ eoi_widgets }}"
     volumes:
       - "{{ eoi_install_dir }}/{{ eoi_container }}/assets:/assets"

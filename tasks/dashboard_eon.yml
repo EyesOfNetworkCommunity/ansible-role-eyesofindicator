@@ -22,6 +22,11 @@
 - debug:
     msg: "EONAPI KEY for user {{ eon_user }} on host {{ eon_ip_address.address }}: {{ validate.json.status }}"
 
+- name: Copy default files
+  copy:
+    src: "{{ role_path }}/files/defaults/"
+    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/"
+
 - name: Modify jobs with TOKEN
   template:
     src: "jobs/eon.rb.j2"
@@ -30,4 +35,5 @@
 - name: Restart docker container
   docker_container:
     name: "{{ eoi_container }}"
-    state: restarted
+    state: started
+    restart: yes
