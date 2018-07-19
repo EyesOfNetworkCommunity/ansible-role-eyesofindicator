@@ -2,7 +2,6 @@
 # defaults file for ansible-role-eyesofindicator
 
 eoi_container: "eoi"
-eoi_remove: false
 eoi_version: "2.0"
 eoi_image: "eyes/eoi"
 eoi_port: 3030
@@ -14,3 +13,4 @@ eoi_gems: "rest-client"
 eoi_samples: true
 eoi_widgets: ""
 eoi_install_dir: "/srv/eyesofindicator"
+eoi_remove: false
