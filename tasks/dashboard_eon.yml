@@ -22,11 +22,6 @@
 - debug:
     msg: "EONAPI KEY for user {{ eon_user }} on host {{ eon_ip_address.address }}: {{ validate.json.status }}"
 
-- name: Copy static files
-  copy:
-    src: "{{ role_path }}/files/defaults/"
-    dest: "{{ eoi_install_dir }}/{{ eoi_container }}/"
-
 - name: Modify jobs with TOKEN
   template:
     src: "jobs/eon.rb.j2"
