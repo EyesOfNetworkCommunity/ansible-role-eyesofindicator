@@ -5,7 +5,7 @@
   selinux:
     state: disabled
 
-- name: install dependencies
+- name: install git docker
   yum:
     name: "{{ item }}"
     state: present
