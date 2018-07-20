@@ -6,7 +6,6 @@ Requirements
 ------------
 
 CentOS 7 with minimal install.
-Ansible < 2.6
 
 Role Variables
 --------------
@@ -20,7 +19,10 @@ Role Variables
 * `eoi_keep_updated` - yes
 * `eoi_apks` - ""
 * `eoi_gems` - ""
+* `eoi_samples` - yes
 * `eoi_widgets` - ""
+* `eoi_install_dir` - "/srv/eyesofindicator"
+* `eoi_remove` - false
 
 Example Playbook
 ----------------
@@ -30,15 +32,21 @@ Example Playbook
   hosts: eyesofindicator
   remote_user: ansible
   become: true
+  vars:
+    import_dashboard_eon: false
   tasks:
   - import_role:
       name: eyesofindicator
       tasks_from: install
+  - import_role:
+      name: eyesofindicator
+      tasks_from: dashboard_eon
+    when: import_dashboard_eon
 ```
 
 Author Information
 ------------------
 
 * **Jean-Philippe Levy** - <jean-philippe.levy@axians.com> - [EyesOfNetwork Community](https://github.com/eyesofnetworkcommunity)
-* **Guilalume Ona** - <guillaume.ona@axians.com> - [EyesOfNetwork Community](https://github.com/eyesofnetworkcommunity)
+* **Guillaume Ona** - <guillaume.ona@axians.com> - [EyesOfNetwork Community](https://github.com/eyesofnetworkcommunity)
 * **Sebastien Davoult** - <sebastien.davoult@axians.com> - [EyesOfNetwork Community](https://github.com/eyesofnetworkcommunity)
