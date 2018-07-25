@@ -2,7 +2,7 @@
 require 'rest-client'
 
 # EON infos
-eon_ip = '{{ ansible_default_ipv4.address }}'
+eon_ip = '{{ eon_ip_address }}'
 eon_token = '{{ request_key.json.EONAPI_KEY }}'
 
 # Variables list_status
@@ -20,7 +20,7 @@ end
 # Get nagios states
 SCHEDULER.every '60s', :first_in => 0 do
 
-	api_url = 'https://'+eon_ip+'/eonapi/listNagiosStates?username=admin&apiKey='+eon_token
+	api_url = 'https://'+eon_ip+'/eonapi/listNagiosStates?username={{ eon_user }}&apiKey='+eon_token
 
 	response = RestClient::Resource.new(
 		api_url,

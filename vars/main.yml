@@ -1,5 +1,2 @@
 ---
 # vars file for ansible-role-eyesofindicator
-eon_ip_address: "{{ ansible_default_ipv4 }}"
-eon_user: admin
-eon_password: admin
