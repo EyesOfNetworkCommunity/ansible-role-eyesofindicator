@@ -9,6 +9,7 @@
     headers:
       Content-Type: "application/json"
   register: request_key
+  ignore_errors: yes
 
 - name: EON Token validated
   uri:
@@ -18,9 +19,12 @@
     headers:
       Content-Type: "application/json"
   register: validate
+  ignore_errors: yes
+  when: request_key is succeeded
 
 - debug:
     msg: "EONAPI KEY for user {{ eon_user }} on host {{ eon_ip_address }}: {{ validate.json.status }}"
+  when: request_key is succeeded
 
 - name: Copy default files
   copy:
@@ -31,6 +35,7 @@
   template:
     src: "jobs/eon.rb.j2"
     dest: "{{ eoi_install_dir }}/{{ eoi_container }}/jobs/eon.rb"
+  when: request_key is succeeded
 
 - name: Restart docker container
   docker_container:
