@@ -7,13 +7,12 @@
 
 - name: install dependencies
   yum:
-    name: "{{ item }}"
+    name:
+      - docker
+      - epel-release
+      - git
     state: present
-  with_items:
-    - docker
-    - epel-release
-    - git
-
+ 
 - name: install python-docker-py
   yum:
     name: python-docker-py
@@ -86,7 +85,7 @@
   docker_container:
     name: "{{ eoi_container }}"
     state: absent
-  when: eoi_remove
+  when: eoi_remove | bool
 
 - name: run docker container
   docker_container:
