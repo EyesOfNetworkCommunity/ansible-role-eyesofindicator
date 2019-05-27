@@ -10,7 +10,7 @@ eoi_repo_dir: "/tmp/eoi"
 eoi_keep_updated: yes
 eoi_apks: ""
 eoi_gems: rest-client
-eoi_samples: "true"
+eoi_samples: True
 eoi_widgets: ""
 eoi_install_dir: "/srv/eyesofindicator"
 eoi_remove: false

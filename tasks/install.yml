@@ -53,15 +53,18 @@
 
 - name: build docker image
   docker_image:
-    path: "{{ eoi_repo_dir }}"
+    build:
+      path: "{{ eoi_repo_dir }}"
+      pull: yes
     name: "{{ eoi_image }}"
     tag: "{{ eoi_version }}"
+    source: build
 
 - name: delete required directories
   file:
     path: "{{ eoi_install_dir }}/{{ eoi_container }}"
     state: absent
-  when: eoi_remove
+  when: eoi_remove | bool
 
 - name: create required directories
   file:
@@ -98,7 +101,7 @@
     env:
       APKS: "{{ eoi_apks }}"
       GEMS: "{{ eoi_gems }}"
-      SAMPLES: "{{ eoi_samples }}"
+      SAMPLES: "{{ eoi_samples | string }}"
       WIDGETS: "{{ eoi_widgets }}"
     volumes:
       - "{{ eoi_install_dir }}/{{ eoi_container }}/assets:/assets"
