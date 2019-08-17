@@ -3,7 +3,7 @@
 
 - name: eonapi key retrieved
   uri:
-    url: "https://{{ eon_ip_address }}/eonapi/getApiKey?&username={{ eon_user }}&password={{ eon_password }}"
+    url: "{{ eon_api_url }}/getApiKey?&username={{ eon_user }}&password={{ eon_password }}"
     body_format: json
     validate_certs: no
     headers:
@@ -13,7 +13,7 @@
 
 - name: EON Token validated
   uri:
-    url: "https://{{ eon_ip_address }}/eonapi/getAuthenticationStatus?&username={{ eon_user }}&apiKey={{ request_key.json.EONAPI_KEY }}"
+    url: "{{ eon_api_url }}/getAuthenticationStatus?&username={{ eon_user }}&apiKey={{ request_key.json.EONAPI_KEY }}"
     body_format: json
     validate_certs: no
     headers:

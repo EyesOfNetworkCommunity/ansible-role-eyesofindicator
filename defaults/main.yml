@@ -15,5 +15,6 @@ eoi_widgets: ""
 eoi_install_dir: "/srv/eyesofindicator"
 eoi_remove: false
 eon_ip_address: "{{ ansible_default_ipv4.address }}"
+eon_api_url: https://{{ eon_ip_address | default (ansible_default_ipv4.address) }}/eonapi
 eon_user: admin
 eon_password: admin
