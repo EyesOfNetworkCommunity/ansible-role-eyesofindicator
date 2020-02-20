@@ -12,7 +12,7 @@
       - epel-release
       - git
     state: present
- 
+
 - name: install python-docker-py
   yum:
     name: python-docker-py
@@ -22,13 +22,30 @@
 - name: install pip
   yum:
     name: python-pip
-    state: present
+    state: latest
   when: "ansible_version.full >= '2.6.0'"
+
+- name: force update pip install 
+  pip: 
+    name: pip
+    extra_args: --upgrade
 
 - name: pip uninstall docker-py
   pip:
     name: docker-py
     state: absent
+  when: "ansible_version.full >= '2.6.0'"
+
+- name: install python-devel
+  yum:
+    name: python-devel
+    state: present
+  when: "ansible_version.full >= '2.6.0'"
+
+- name: install gcc
+  yum:
+    name: gcc
+    state: present
   when: "ansible_version.full >= '2.6.0'"
 
 - name: pip install docker-compose
